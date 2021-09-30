@@ -1,9 +1,5 @@
 from os import getcwd
 
-song_bpm: int = 80
-song_key: str = "C"
-song_bars: int = 16
-
 midi_notes: dict = {
     "C":    36,
     "C#":   37,
@@ -19,7 +15,16 @@ midi_notes: dict = {
     "B":    47,
 }
 
+note_alias: dict = {
+    "Db":   37,
+    "Eb":   39,
+    "Gb":   42,
+    "Ab":   44,
+    "Bb":   46,
+    "Cb":   47,
+}
+
 keys: list = list(midi_notes.keys())
 
 output_dir: str = getcwd() + "/build/"
-soundfont_dir: str = getcwd() + "/music_generation/soundfonts/"
+soundfont_dir: str = getcwd() + "/orchestration/soundfonts/"

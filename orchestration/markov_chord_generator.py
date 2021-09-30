@@ -1,5 +1,5 @@
 import numpy as np
-from music_generation.configuration import keys
+from orchestration.constants import keys
 
 possible_options = []
 
@@ -38,7 +38,7 @@ def generate_sequence(chord: str, length: int = 30):
     chords = []
     chords.append(chord)
 
-    for n in range(length):
+    for _ in range(length):
         chords.append(_predict_next_state(chords[-1]))
 
     chords.append(original_chord)
