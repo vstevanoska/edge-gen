@@ -1,0 +1,6 @@
+sox
+numpy
+mingus
+MIDIUtil
+midi2audio
+git+https://github.com/kostoskistefan/chords2midi.git#egg=chords2midi
