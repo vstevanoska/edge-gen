@@ -25,14 +25,16 @@ class Instrument(ABC):
     def generate(self) -> None:
         raise NotImplementedError()
 
+    
+
     def save_midi(self) -> None:
-        with open(constants.output_dir + self.identifier + ".mid", "wb") as midi:
+        with open(constants.output_dir + self.identifier + '.mid', 'wb') as midi:
             self.midi_file.writeFile(midi)
 
     def midi_to_audio(self) -> None:
-        fs = FluidSynth(constants.soundfont_dir + self.identifier + ".sf2")
+        fs = FluidSynth(constants.soundfont_dir + self.identifier + '.sf2')
 
-        fs.midi_to_audio(constants.output_dir + self.identifier + ".mid",
-                         constants.output_dir + self.identifier + ".wav")
+        fs.midi_to_audio(constants.output_dir + self.identifier + '.mid',
+                         constants.output_dir + self.identifier + '.wav')
 
-        remove(constants.output_dir + self.identifier + ".mid")
+        remove(constants.output_dir + self.identifier + '.mid')

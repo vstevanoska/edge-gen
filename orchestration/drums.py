@@ -9,9 +9,9 @@ class Drums(Instrument):
         super().__init__(identifier=identifier, note_duration=note_duration)
 
     def generate(self) -> None:
-        self.midi_file.addTempo(self.track, self.current_beat, config.song_bpm)
+        self.midi_file.addTempo(self.track, self.current_beat, config.bpm)
 
-        for bar in range(int(config.song_bars / 2)):
+        for bar in range(int(config.bars / 2)):
             if bar % 4 == 0:
                 self.add_note(
                     note=drum_notes['cymbal'], duration=self.duration)

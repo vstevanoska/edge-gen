@@ -1,44 +1,62 @@
-import numpy as np
 from typing import List
-from orchestration.constants import keys
+from numpy import random, roll
 import orchestration.config as config
+from orchestration.constants import keys, roman_numerals
+
 
 class MarkovGenerator:
     def __init__(self) -> None:
-        self.possible_options = []
+        self.markov_node = config.probability_matrices[random.randint(
+            0, len(config.probability_matrices))]
 
+    def predict_next_state(self, note: str) -> str:
+        note_probability = self.markov_node.possible_options.index(note)
+        return random.choice(self.markov_node.possible_options, p=self.markov_node.probabilities[note_probability])
 
-    def _generate_possible_options(self, key_index: int) -> List[str]:
-        options = []
-        progression_indexes = [0, 5, 7, 10, 3]
+    def generate_possible_options(self, start_note: str) -> None:
+        self.generate_scale(start_note)
+        notes = [roman_numerals[number] -
+                 1 for number in self.markov_node.notes]
 
-        for i in range(len(progression_indexes)):
-            current_index = (key_index + progression_indexes[i]) % 12
-            options.append(keys[current_index])
+        if config.feel == 'major':
+            self.add_chord_quality(notes, [1, 2, 5], 6)
 
-        return options
+        elif config.feel == 'minor':
+            self.add_chord_quality(notes, [0, 3, 4], 2)
 
+    def add_chord_quality(self, notes: list, minor_intervals: list, diminished_note_index: int):
+        for index, note in enumerate(notes):
+            self.markov_node.possible_options.append(
+                self.markov_node.scale[note])
+            if note in minor_intervals:
+                self.markov_node.possible_options[index] += 'm'
 
-    def _predict_next_state(self, note: str) -> str:
-        return np.random.choice(self.possible_options, p=config.probability_matrix[self.possible_options.index(note)])
+            elif note == diminished_note_index:
+                self.markov_node.possible_options[index] += 'dim'
 
+    def generate_scale(self, start_note: str) -> None:
+        scale_shift = roll(keys, -keys.index(start_note))
+        scale_indexes = []
 
-    def generate_sequence(self, chord: str, length: int = 30) -> List[str]:
-        self.possible_options = self._generate_possible_options(keys.index(chord))
+        if config.feel == 'major':
+            scale_indexes = [0, 2, 4, 5, 7, 9, 11]
+            self.markov_node.scale = [scale_shift[i] for i in scale_indexes]
 
-        chords = []
-        chords.append(chord)
+        elif config.feel == 'minor':
+            scale_indexes = [0, 2, 3, 5, 7, 9, 11]
+            self.markov_node.scale = [scale_shift[i] for i in scale_indexes]
+
+    def generate_sequence(self, note: str, length: int = 30) -> List[str]:
+        self.generate_possible_options(note)
+
+        chords = [self.markov_node.possible_options[0]]
 
         for _ in range(length - 2):
-            chords.append(self._predict_next_state(chords[-1]))
+            chords.append(self.predict_next_state(chords[-1]))
 
-        chords.append(chord)
+        chords.append(self.markov_node.possible_options[0])
 
-        for chord in chords:
-            if self.possible_options.index(chord) <= 1:
-                chords[chords.index(chord)] += "m"
-
-            elif self.possible_options.index(chord) == 2:
-                chords[chords.index(chord)] += "7"
+        print(self.markov_node)
+        print(chords)
 
         return chords

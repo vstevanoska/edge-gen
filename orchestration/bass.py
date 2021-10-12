@@ -15,7 +15,7 @@ class Bass(Instrument):
     def generate(self) -> None:
         self.duration /= self.amount_of_notes_per_bar
 
-        self.midi_file.addTempo(self.track, self.current_beat, config.song_bpm)
+        self.midi_file.addTempo(self.track, self.current_beat, config.bpm)
 
         for chord in self.progression:
             for _ in range(self.amount_of_notes_per_bar):
